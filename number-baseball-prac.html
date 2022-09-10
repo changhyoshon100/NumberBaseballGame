@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="form">
+        <input type="text" id="input" onfocus="this.value=''">
+        <button>submit</button>
+    </form>
+</body>
+<script>
+    /////////////// 9/6  8:30a.m  done by number check with regex
+    ////////////// next, check homerun and tries 10 times
+
+    ////////////// 9/8 5:14a.m done create answer set and check homerun
+    ////////////// next, display strike and ball and make inputbox empty
+
+    ///////////// 9/9: 7:04a.m done to display strike and ball and make inputbox empty
+    ///////////// next, display out 
+    /*
+    Number baseball game:
+    rule
+        1. there's a random 4 digit's number as answer
+        2. you should guess by putting only 4 numbers
+        3. if you get a number right but only order is different, you will get a ball
+           if you get a number and order is right, you will get a strike
+           if you get all number and order right, you will get homerun
+        4. if you attempt 10 times, you lose
+    */
+    alert(`Number-Baseball-Game\n
+    Rule:\n1. there's a random 4 digit's number as answer
+    \n2. you should guess by putting only 4 numbers
+    \n3. if you get a number right but only order is different, you will get a ball
+    \nif you get a number and order is right, you will get a strike
+    \nif you get all number and order right, you will get homerun and you win
+    \n4. if you attempt 10 times, you will lose
+    \n5. if you get any order and number wrong, you will get out
+    \n6. if you reach to 3 out , you will lose`);
+    let answer = []
+    let guess = []
+    let outCnt = 0;
+    let flag = false
+    //create answer set 
+    for(let i = 0; i < 4;){    
+        number = Math.floor(Math.random() * 9 + 1)
+        if(!answer.includes(String(number))){
+            answer.push(String(number));
+            i++;
+        }
+    }
+
+    console.log('answer:',answer);
+
+    const formSubmit = (event) => {
+        event.preventDefault();
+        let strike = 0;
+        let ball = 0;
+        let $input = document.querySelector('input');
+        
+        //check if your answer is on the right form
+        if(checkInput($input.value) && guess.length < 10){
+            //your guessing number is pushed to guess array
+            guess.push($input.value);
+
+            //make the input string to compare answer variable(string)
+            $input = $input.value.split('');
+            
+            //to compare one by one
+            for(let i=0; i<$input.length; i++){
+                
+                //indexOf returns -1 if nothings in an array
+                if(answer.indexOf($input[i]) != -1){
+                    let ansIndex = 0;
+                    
+                    //an element is in array which get by ansIndex 
+                    ansIndex = answer.indexOf($input[i]);
+
+                    //count strike and ball
+                    if(ansIndex == i){
+                        strike += 1;
+                    }else{
+                        ball += 1;
+                    }                       
+                }    
+            }
+            if(strike != 0 || ball != 0){
+                alert(`You got ${strike} strike and ${ball} ball!`);
+            }else{
+                outCnt+=1;
+                alert(`${outCnt}Out!`);
+            }
+            
+            if(outCnt >= 3){
+                alert('3 out! it\'s over!');
+                alert(`the answer is ${answer}`)
+                return;
+            }
+            
+            
+            
+        //guess no more than 10 times
+        }else if(guess.length >= 10){
+            alert('You tried 10 times! over!');
+            alert(`the answer is ${answer}`)
+            return;
+        }
+
+        //if guessing number is correct
+        if(answer.join('') == $input.join('')){
+            alert('homerun!');
+            return;
+        }
+        console.log('input join:', $input.join(''));
+        console.log('input value:', $input.value);
+        console.log('answer.join("")', answer.join(''));
+    }
+
+    //check if your answer is on the right form
+    const checkInput = (input) => {
+        
+        //your guessing number should be 4
+        if(input.length == 4){
+        }else{
+            alert('Input 4 length!');
+            return false;
+        }
+        //no same answer
+        for(let i = 0;  i < guess.length-1; i++){
+            if(guess[i] == input){
+                alert('Input not previous number!');
+                return false;
+            }
+        }
+        //only digits
+        const patterns =/^[1-9]{4}/;
+        
+        if(patterns.exec(input)){
+            console.log('match!');
+        }else{
+            alert('Input only digits without 0!');
+            return false;
+        }
+
+        //no repititive number
+        let checkRep = new Set(input)
+        if(checkRep.size != 4){
+            console.log(checkRep.size);
+            alert('You should input different digits!');
+            return false;
+        }{
+            console.log(checkRep);
+        }
+        return true;
+    }
+
+    //connect form tag with submit function
+    document.querySelector('form').addEventListener('submit',formSubmit);
+
+    //make input empty
+    document.querySelector('input').value = '';
+    
+</script>
+</html>
